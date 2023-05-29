@@ -24,7 +24,7 @@ from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="CurB backend API",
+        title="Okpos 과제 테스트",
         default_version="v1",
     ),
     public=True,

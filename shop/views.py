@@ -1,16 +1,22 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from .models import Product
+from .serializers import ProductSerializer
+from drf_yasg.utils import swagger_auto_schema
 
 
-# Create your views here.
-class ProductAll(APIView):
-    def get(self, request):
-        pass
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.prefetch_related("tag_set", "option_set")
+    # queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-    def post(self, request):
-        pass
+    # @swagger_auto_schema(
+    #     request_body=ProductSerializer,
+    #     responses={
+    #         200: ProductSerializer,
+    #     },
+    # )
+    # def create(self, request, *args, **kwargs):
+    #     return super().create(request, *args, **kwargs)
 
 
-class ProductDetail(APIView):
-    def patch(self, request, pk):
-        pass
+# class ProductDetail(ModelViewSet):
