@@ -13,7 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build and test Docker image
-        run: |
-          docker build -t django:test .
-          docker run django:test python manage.py test
+      - name: Build Docker image Test
+        run: docker build -t django:test .
+
+      - name: Django Container Test
+        run: docker run django:test python manage.py test
