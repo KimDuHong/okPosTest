@@ -23,8 +23,8 @@ class TagSerializer(ModelSerializer):
 
 
 class ProductSerializer(WritableNestedModelSerializer):
-    option_set = ProductOptionSerializer(many=True)
-    tag_set = TagSerializer(many=True)
+    option_set = ProductOptionSerializer(many=True, read_only=True)
+    tag_set = TagSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
