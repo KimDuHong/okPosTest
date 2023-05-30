@@ -17,7 +17,7 @@ jobs:
         run: docker build -t django:test .
 
       - name: Django Container Test
-        run: docker run django:test pytest --cov --cov-report term
+        run: docker run django:test pytest --cov --cov-report=xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
