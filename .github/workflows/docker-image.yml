@@ -17,9 +17,11 @@ jobs:
         run: docker build -t django:test .
 
       - name: Django Container Test
-        run: docker run django:test pytest --cov --cov-report=xml
+        run: |
+          docker run --name django-container django:test pytest --cov --cov-report=xml
+          docker cp django-container:/okpos/coverage.xml ${{ github.workspace }}/coverage.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          file: coverage.xml
