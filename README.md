@@ -34,6 +34,7 @@ $ docker-compose up --build
 
 ```bash
 $ pytest --cov --cov-report term
+```
 
 > ### APIs
 
@@ -43,4 +44,3 @@ $ pytest --cov --cov-report term
 | -------------------- | :---------------------- | :------------------------------- |
 | `/shop/product`      | GET, POST               | Product 조회 및 추가             |
 | `/shop/product/<pk>` | GET, PATCH, PUT, DELETE | Product Detail 조회 및 옵션 수정 |
-```
