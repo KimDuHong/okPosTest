@@ -1,7 +1,8 @@
 # okPos Coding Test
 
 > ### INSTALLATION
-``` bash
+
+```bash
 $ git clone https://github.com/KimDuHong/okPosTest
 $ cd okPosTest
 
@@ -20,24 +21,23 @@ $ python manage.py runserver
 
 > ### Docker Build
 
-``` bash
+```bash
 $ docker-compose up --build
 
 # visit 0.0.0.0:8000
 ```
+
 > ### Test
-``` bash
-$ pytest
-```
+
+```bash
+$ pytest --cov --cov-report term
 
 > ### APIs
 
 ---
-| url | methods | descriptions |
-|---|:---|:---|
-| `/shop/product`| GET, POST | Product 조회 및 추가  |
-| `/shop/product/<pk>`| GET, PATCH | Product Detail 조회 및 옵션 수정 |
 
-
-
-
+| url                  | methods                 | descriptions                     |
+| -------------------- | :---------------------- | :------------------------------- |
+| `/shop/product`      | GET, POST               | Product 조회 및 추가             |
+| `/shop/product/<pk>` | GET, PATCH, PUT, DELETE | Product Detail 조회 및 옵션 수정 |
+```

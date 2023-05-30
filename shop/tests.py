@@ -247,7 +247,7 @@ class TestProductPostAPI:
             "option_set": [
                 {"name": "TestOption1", "price": 1000},
                 {"name": "TestOption2", "price": 500},
-                {"name": "TestOption3", "price": "Error"},
+                {"name": "TestOption3", "price": 0},
             ],
             "tag_set": [{"pk": 1, "name": "ExistTag"}, {"name": "ExistTag"}],
         }
@@ -260,7 +260,7 @@ class TestProductPostAPI:
             "option_set": [
                 {"name": "TestOption1", "price": 1000},
                 {"name": "TestOption2", "price": 500},
-                {"name": "TestOption3", "price": "Error"},
+                {"name": "TestOption3", "price": 0},
             ],
             "tag_set": [{"pk": 1}, {"name": "ExistTag"}],
         }
@@ -273,7 +273,7 @@ class TestProductPostAPI:
             "option_set": [
                 {"name": "TestOption1", "price": 1000},
                 {"name": "TestOption2", "price": 500},
-                {"name": "TestOption3", "price": "Error"},
+                {"name": "TestOption3", "price": 0},
             ],
             "tag_set": [{"pk": 1, "name": "ExistTag"}, {}],
         }
@@ -498,6 +498,25 @@ class TestProductDetailPatchAPI:
             "name": "TestProduct",
             "option_set": [
                 {"pk": 1, "name": "TestOption1"},
+                {"pk": 2, "name": "Edit TestOption2", "price": 1500},
+                {"name": "Edit New Option", "price": 300},
+            ],
+            "tag_set": [
+                {"pk": 1, "name": "ExistTag"},
+                {"pk": 2, "name": "NewTag"},
+                {"name": "Edit New Tag"},
+            ],
+        }
+
+        response = self.client.patch(self.url, request_data, format="json")
+        assert response.status_code == 400
+
+    def test_update_product_fail_option_price_is_string(self):
+        request_data = {
+            "pk": 1,
+            "name": "TestProduct",
+            "option_set": [
+                {"pk": 1, "name": "TestOption1", "price": "Error"},
                 {"pk": 2, "name": "Edit TestOption2", "price": 1500},
                 {"name": "Edit New Option", "price": 300},
             ],

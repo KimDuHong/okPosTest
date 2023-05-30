@@ -22,12 +22,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    # Admin 에서 확인용
     @property
     def tag_set_list(self):
         return (
             [i for i in self.tag_set.all()] if [i for i in self.tag_set.all()] else None
         )
 
+    # Admin 에서 확인용
     @property
     def option_list(self):
         return (
