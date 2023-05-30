@@ -1,4 +1,5 @@
-# okPos Coding Test 
+# okPos Coding Test
+
 ![example workflow](https://github.com/KimDuHong/okPosTest/actions/workflows/docker-image.yml/badge.svg)
 
 > ### INSTALLATION
