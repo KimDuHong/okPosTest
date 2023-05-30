@@ -11,6 +11,7 @@ drf-yasg = "^1.21.5"
 django-debug-toolbar = "3.2.4"
 drf-writable-nested = "^0.7.0"
 djangorestframework = "3.12.4"
+pytest-django = "^4.5.2"
 
 [tool.poetry.dev-dependencies]
 

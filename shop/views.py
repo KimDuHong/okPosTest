@@ -18,7 +18,7 @@ class ProductViewSet(ModelViewSet):
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=["name"],
+            required=["name", "option_set", "tag_set"],
             properties={
                 "name": openapi.Schema(
                     type=openapi.TYPE_STRING,
@@ -68,6 +68,10 @@ class ProductViewSet(ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         data = request.data
+
+        if "option_set" not in data or "tag_set" not in data:
+            raise ParseError("잘못된 데이터입니다.")
+
         option_data = data.pop("option_set", [])
         tag_data = data.pop("tag_set", [])
 
@@ -125,7 +129,7 @@ class ProductViewSet(ModelViewSet):
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=["pk", "name"],
+            required=["pk", "name", "option_set", "tag_set"],
             properties={
                 "pk": openapi.Schema(
                     type=openapi.TYPE_INTEGER,
@@ -183,6 +187,15 @@ class ProductViewSet(ModelViewSet):
     @transaction.atomic
     def partial_update(self, request, pk, *args, **kwargs):
         data = request.data
+
+        if (
+            "option_set" not in data
+            or "tag_set" not in data
+            or "name" not in data
+            or "pk" not in data
+        ):
+            raise ParseError("잘못된 데이터입니다.")
+
         if data.get("pk") != pk:
             raise ParseError("잘못된 접근입니다.")
 
@@ -248,7 +261,8 @@ class ProductViewSet(ModelViewSet):
 
         if new_tags:
             try:
-                Tag.objects.bulk_create(new_tags, ignore_conflicts=True)
+                Tag.objects.bulk_create(new_tags)
+                # Tag.objects.bulk_create(new_tags, ignore_conflicts=True)
             except IntegrityError:
                 raise ValidationError("태그명은 중복될 수 없습니다.")
 
