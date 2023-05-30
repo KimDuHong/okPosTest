@@ -1,19 +1,70 @@
 from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.exceptions import NotFound, ValidationError
-from .serializers import ProductSerializer, TagSerializer, ProductOptionSerializer
+from rest_framework.exceptions import ValidationError, ParseError
+from .serializers import ProductSerializer
 from .models import Product, Tag, ProductOption
 
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.prefetch_related("tag_set", "option_set")
-
     serializer_class = ProductSerializer
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["name"],
+            properties={
+                "name": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="상품명",
+                ),
+                "option_set": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    description="옵션 추가",
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "name": openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description="옵션 이름 (required)",
+                            ),
+                            "price": openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description="옵션 가격 (required)",
+                            ),
+                        },
+                    ),
+                ),
+                "tag_set": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    description="태그 리스트",
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "pk": openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description="기존에 존재하는 태그 연결시 사용, Null 시 새로운 태그 생성",
+                            ),
+                            "name": openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description="태그 명 (required), 고유한 값",
+                            ),
+                        },
+                    ),
+                ),
+            },
+        ),
+        responses={
+            201: openapi.Response(description="Created", schema=ProductSerializer),
+            400: "Bad Request",
+        },
+    )
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -71,10 +122,71 @@ class ProductViewSet(ModelViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["pk", "name"],
+            properties={
+                "pk": openapi.Schema(
+                    type=openapi.TYPE_INTEGER,
+                    description="변경하려는 상품의 pk",
+                ),
+                "name": openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description="상품명",
+                ),
+                "option_set": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    description="옵션 추가 / 변경 / 삭제",
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "pk": openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description="기존에 존재하는 옵션 연결 및 수정시에 사용, Null 시 새로운 옵션 생성",
+                            ),
+                            "name": openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description="옵션 이름 (required)",
+                            ),
+                            "price": openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description="옵션 가격 (required)",
+                            ),
+                        },
+                    ),
+                ),
+                "tag_set": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    description="태그 리스트",
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            "pk": openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description="기존에 존재하는 태그 연결시 사용, Null 시 새로운 태그 생성",
+                            ),
+                            "name": openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description="태그 명 (required), 고유한 값",
+                            ),
+                        },
+                    ),
+                ),
+            },
+        ),
+        responses={
+            201: openapi.Response(description="Created", schema=ProductSerializer),
+            400: "Bad Request",
+        },
+    )
     @transaction.atomic
-    def update(self, request, pk, *args, **kwargs):
-        product = get_object_or_404(Product, pk=pk)
+    def partial_update(self, request, pk, *args, **kwargs):
         data = request.data
+        if data.get("pk") != pk:
+            raise ParseError("잘못된 접근입니다.")
+
+        product = get_object_or_404(Product, pk=pk)
 
         option_data = data.pop("option_set", [])
         tag_data = data.pop("tag_set", [])
