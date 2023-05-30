@@ -2,6 +2,7 @@
 
 ![example workflow](https://github.com/KimDuHong/okPosTest/actions/workflows/docker-image.yml/badge.svg)
 
+[![codecov](https://codecov.io/gh/KimDuHong/okPosTest/branch/main/graph/badge.svg?token=VTKIOR9MIT)](https://codecov.io/gh/KimDuHong/okPosTest)
 > ### INSTALLATION
 
 ```bash
